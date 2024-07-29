@@ -1,6 +1,6 @@
 use std::env;
 use knapsack::problem::{evaluate_solution, read_instance};
-use knapsack::search::random_search;
+use knapsack::search::{random_search, hill_climbing};
 
 fn main() {
     let args: Vec<String> = env::args().collect();
@@ -12,7 +12,8 @@ fn main() {
 
     println!("INSTANCE\n{}\n{:?}", args[1], instance);
 
-    let best = random_search(&instance);
+    // let best = random_search(&instance);
+    let best = hill_climbing(&instance);
 
     println!("SOLUTION {} {:?}", evaluate_solution(&best, &instance), best);
 }

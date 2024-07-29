@@ -54,12 +54,5 @@ Example:
 ## Solvers
 
 - Random Search
+- Hill Climbing
 - Genetic Algorithm (TODO)
-
-### Random Search
-
-Generates a new random solution and compares to the best found so far. If it is the first solution, it becomes the best. Repeats the process until the best profit is found.
-
-### Genetic Algorithm
-
-TODO
