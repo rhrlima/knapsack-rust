@@ -55,4 +55,4 @@ Example:
 
 - Random Search
 - Hill Climbing
-- Genetic Algorithm (TODO)
+- Genetic Algorithm
