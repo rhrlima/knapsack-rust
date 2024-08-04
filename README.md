@@ -17,9 +17,15 @@ To run the tests, you can run:
 cargo test
 ```
 
-To run the solver, you can run:
+Usage:
 ```bash
-cargo run "path_to_your_instace"
+Usage: knapsack --algorithm <ALGORITHM> --instance-file <INSTANCE_FILE>
+
+Options:
+  -a, --algorithm <ALGORITHM>
+  -i, --instance-file <INSTANCE_FILE>
+  -h, --help                           Print help
+  -V, --version                        Print version
 ```
 
 ## Instance Files
