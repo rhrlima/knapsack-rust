@@ -1,19 +1,33 @@
-use std::env;
-use knapsack::problem::{evaluate_solution, read_instance};
-use knapsack::search::{random_search, hill_climbing};
+use clap::Parser;
+use std::time::Instant;
+use knapsack::problem::read_instance;
+use knapsack::search::{random_search, hill_climbing, genetic_algorithm};
+
+#[derive(Parser, Debug)]
+#[command(version, about)]
+struct Args {
+    #[arg(short, long)]
+    algorithm: String,
+    #[arg(short, long)]
+    instance_file: String
+}
 
 fn main() {
-    let args: Vec<String> = env::args().collect();
+    let args = Args::parse();
 
-    let instance = match read_instance(&args[1]) {
+    println!("ARGS {:?}", args);
+
+    let instance = match read_instance(&args.instance_file) {
         Ok(data) => data,
         Err(_) => panic!("Error while reading instance file"),
     };
 
-    println!("INSTANCE\n{}\n{:?}", args[1], instance);
-
-    // let best = random_search(&instance);
-    let best = hill_climbing(&instance);
-
-    println!("SOLUTION {} {:?}", evaluate_solution(&best, &instance), best);
+    let now = Instant::now(); 
+    match args.algorithm.as_str() {
+        "RS" => random_search(&instance),
+        "HC" => hill_climbing(&instance, 0.5),
+        "GA" => genetic_algorithm(&instance, 100, 0.1, 0.8),
+        _ => panic!("Unknown algorithm! Exiting..."),
+    };
+    println!("{} {:?}", args.algorithm, now.elapsed().as_nanos());
 }
