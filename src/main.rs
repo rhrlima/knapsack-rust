@@ -9,25 +9,33 @@ struct Args {
     #[arg(short, long)]
     algorithm: String,
     #[arg(short, long)]
-    instance_file: String
+    instance_file: String,
+    #[arg(short, long)]
+    verbose: bool
 }
 
 fn main() {
     let args = Args::parse();
 
-    println!("ARGS {:?}", args);
+    if args.verbose {
+        println!("ALGORITHM {}", args.algorithm);
+        println!("INSTANCE {}", args.instance_file);
+    }
 
     let instance = match read_instance(&args.instance_file) {
         Ok(data) => data,
         Err(_) => panic!("Error while reading instance file"),
     };
 
-    let now = Instant::now(); 
-    match args.algorithm.as_str() {
-        "RS" => random_search(&instance),
-        "HC" => hill_climbing(&instance, 0.5),
-        "GA" => genetic_algorithm(&instance, 100, 0.1, 0.8),
+
+    let max_it = 1e7 as usize;
+    let now = Instant::now();
+    let (_, best_profit) = match args.algorithm.as_str() {
+        "RS" => random_search(&instance, max_it),
+        "HC" => hill_climbing(&instance, 0.5, max_it),
+        "GA" => genetic_algorithm(&instance, 100, 0.1, 0.8, max_it),
         _ => panic!("Unknown algorithm! Exiting..."),
     };
-    println!("{} {:?}", args.algorithm, now.elapsed().as_nanos());
+
+    println!("{:?} {}", now.elapsed().as_nanos(), best_profit);
 }

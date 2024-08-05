@@ -1,12 +1,12 @@
 use crate::problem::{evaluate_solution, generate_solution, Instance};
 use crate::operators::{bitflip_mutation, one_point_crossover, tournament_selection};
 
-pub fn random_search(instance: &Instance) -> Vec<usize> {
+pub fn random_search(instance: &Instance, max_it: usize) -> (Vec<usize>, f32) {
 
     let mut best = vec![0; instance.num_items as usize];
     let mut best_profit = 0.0;
 
-    // let mut count = 0;
+    let mut it = 0;
     while best_profit < instance.optimal {
 
         let solution = generate_solution(instance.num_items as usize);
@@ -19,18 +19,22 @@ pub fn random_search(instance: &Instance) -> Vec<usize> {
             best = solution;
         }
 
-        // count += 1;
+        it += 1;
+
+        if it > max_it {
+            break;
+        }
     }
 
-    best
+    (best, best_profit)
 }
 
-pub fn hill_climbing(instance: &Instance, mut_rate: f32) -> Vec<usize> {
+pub fn hill_climbing(instance: &Instance, mut_rate: f32, max_it: usize) -> (Vec<usize>, f32) {
 
     let mut best = vec![0; instance.num_items as usize];
     let mut best_profit = 0.0;
 
-    // let mut count = 0;
+    let mut it = 0;
     while best_profit < instance.optimal {
 
         let solution = bitflip_mutation(&best, mut_rate);
@@ -42,13 +46,17 @@ pub fn hill_climbing(instance: &Instance, mut_rate: f32) -> Vec<usize> {
             best_profit = profit
         }
 
-        // count += 1;
+        it += 1;
+
+        if it > max_it {
+            break;
+        }
     }
 
-    best
+    (best, best_profit)
 }
 
-pub fn genetic_algorithm(instance: &Instance, pop_size: usize, mut_rate: f32, cross_rate: f32) -> Vec<usize> {
+pub fn genetic_algorithm(instance: &Instance, pop_size: usize, mut_rate: f32, cross_rate: f32, max_it: usize) -> (Vec<usize>, f32) {
 
     let mut population:Vec<Vec<usize>> = Vec::new();
     let mut profits: Vec<f32> = Vec::new();
@@ -60,7 +68,7 @@ pub fn genetic_algorithm(instance: &Instance, pop_size: usize, mut_rate: f32, cr
 
     let (mut best, mut best_profit) = get_best_solution(instance, &population);
 
-    let mut generations = 0;
+    let mut it = pop_size;
     loop {
         if best_profit >= instance.optimal {
             break;
@@ -81,12 +89,16 @@ pub fn genetic_algorithm(instance: &Instance, pop_size: usize, mut_rate: f32, cr
         population = offspring_pop;
 
         (best, best_profit) = get_best_solution(instance, &population);
-        println!("GEN {:4} BEST {:4} {:?}", generations, best_profit, best);
+        // println!("GEN {:4} BEST {:4} {:?}", generations, best_profit, best);
 
-        generations += 1;
+        it += pop_size;
+
+        if it > max_it {
+            break;
+        }
     }
 
-    best.clone()
+    (best, best_profit)
 }
 
 fn get_best_solution(instance: &Instance, population: &Vec<Vec<usize>>) -> (Vec<usize>, f32) {
